@@ -210,11 +210,12 @@ export class WireDataContainerLayer {
   }
   create(key, onReset) {
     console.log(`> Wire -> _DATA_CONTAINER_LAYER: create ${key}`);
-    const wireData = new WireData(key, this.remove, onReset);
+    const wireData = new WireData(key, (key) => this.remove(key), onReset);
     this._dataMap.set(key, wireData);
     return wireData;
   }
   remove(key) {
+    console.log(`> Wire -> _DATA_CONTAINER_LAYER: remove ${key}`);
     return this._dataMap.delete(key);
   }
 

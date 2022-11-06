@@ -1,6 +1,8 @@
-import DomElement from '@/view/base/DomElement';
-import { Wire } from '@wire/core/src';
+import { Wire } from 'cores.wire';
+
+import DomElement from '@/mvc/view/base/DomElement';
 import ViewSignals from '@/consts/ViewSignals';
+import EditDTO from '@/mvc/model/dto/EditDTO';
 
 const createWithClass = (tag, className) => {
   const result = document.createElement(tag);
@@ -29,29 +31,35 @@ class TodoListItemView extends DomElement {
 
     this.inpToggle.onclick = () => Wire.send(ViewSignals.TOGGLE, id);
     this.btnDelete.onclick = () => Wire.send(ViewSignals.DELETE, id);
-    // this.inpEdit.onKeyDown.listen((e) {
-    //   if (e.keyCode == KeyCode.ENTER) {
-    //     Wire.send(ViewSignals.EDIT, payload: getEditData());
-    //   } else if (e.keyCode == KeyCode.ESC) _OnEditCancel();
-    // }),
-    // this.lblContent.onDoubleClick.listen((_) => _OnEditBegin()),
-    //   this.inpEdit.onBlur.listen((_) => _OnEditCancel())
+    this.inpEdit.onkeydown = (e) => {
+      console.log('> TodoListItemView -> inpEdit.onkeydown', e);
+      if (e.key === 'Enter') {
+        Wire.send(ViewSignals.EDIT, this.getEditData()).then(() => this._OnEditCancel());
+      } else if (e.key === 'Escape') this._OnEditCancel();
+    };
+    this.lblContent.ondblclick = () => this._OnEditBegin();
+    this.inpEdit.onblur = () => this._OnEditCancel();
 
     const todoWD = Wire.data(id);
-    todoWD.subscribe(this._OnDataChanged);
+    todoWD.subscribe((todoVO) => this._OnDataChanged(todoVO));
     console.log(`> TodoListItemView(${id}) -> isSet = ${todoWD.isSet}`);
     if (todoWD.isSet) {
       this._OnDataChanged(todoWD.value).then(() => {});
     }
   }
   async _OnDataChanged(todoVO) {
-    console.log(`> TodoListItemView -> _OnTodoDataChanged = ${todoVO?.id ?? 'empty'}`);
+    console.log(`> TodoListItemView -> _OnTodoDataChanged: id = ${todoVO?.id}`);
     if (todoVO == null) {
       this.remove();
     } else {
       this.update(todoVO);
     }
   }
+
+  getEditData() {
+    return new EditDTO(this.dom.id, this.inpEdit.value.trim(), '');
+  }
+
   update(todoVO) {
     console.log(`> TodoListItemView(${this.dom.id}) -> update`, todoVO);
     this.dom.id = todoVO.id;
@@ -67,22 +75,20 @@ class TodoListItemView extends DomElement {
   }
   remove() {
     console.log(`> TodoListItemView(${this.dom.id}) -> remove`);
-    const todoWireData = Wire.data(this.dom.id);
-    todoWireData.unsubscribe(this._OnDataChanged);
-    // listeners.removeWhere((element) { element.cancel(); return true; });
     this.inpToggle.onclick = null;
     this.btnDelete.onclick = null;
-    this.container.remove();
-    this.inpEdit.remove();
+    this.inpEdit.onkeydown = null;
+    this.lblContent.ondblclick = null;
+    this.inpEdit.onblur = null;
     this.dom.remove();
   }
   _OnEditBegin() {
-    this.dom.style.classList.add('editing');
+    this.dom.classList.add('editing');
     this.inpEdit.focus();
   }
   _OnEditCancel() {
-    this.inpEdit.text = this.lblContent.text;
-    this.dom.style.classList.remove('editing');
+    this.inpEdit.value = this.lblContent.innerText;
+    this.dom.classList.remove('editing');
   }
 }
 

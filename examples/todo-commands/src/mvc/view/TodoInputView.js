@@ -1,6 +1,8 @@
-import DomElement from '@/view/base/DomElement';
+import { Wire } from 'cores.wire';
+
+import DomElement from '@/mvc/view/base/DomElement';
 import ViewSignals from '@/consts/ViewSignals';
-import { Wire } from '@wire/core/src';
+import InputDTO from '@/mvc/model/dto/InputDTO';
 
 class TodoInputView extends DomElement {
   constructor(dom) {
@@ -13,7 +15,7 @@ class TodoInputView extends DomElement {
         const isEnterPressed = e.key === 'Enter';
         console.log('> TodoInputView -> onkeyup:', { isEnterPressed });
         if (isEnterPressed) {
-          await Wire.send(ViewSignals.INPUT, this.dom.value);
+          await Wire.send(ViewSignals.INPUT, new InputDTO(this.dom.value, ''));
         }
       };
       console.log('> TodoInputView -> init');

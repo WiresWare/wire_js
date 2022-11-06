@@ -28,6 +28,7 @@
         "bracketSpacing": true,
         "arrowParens": "always"
       }
-    ]
+    ],
+    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }]
   }
 }

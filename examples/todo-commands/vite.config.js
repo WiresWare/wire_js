@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
+import removeConsole from 'vite-plugin-remove-console';
 
 export default defineConfig({
   resolve: {
@@ -8,5 +9,5 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
-  plugins: [eslint()],
+  plugins: [eslint(), removeConsole()],
 });

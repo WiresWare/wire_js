@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "cores.wire": {
+      "signature": "74ef87bc663f616b8be26479bf33788e",
+      "file": true,
+      "replaced": "file:./../../../wire_js"
+    }
+  }
+}

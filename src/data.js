@@ -4,7 +4,7 @@
 /// License: APACHE LICENSE, VERSION 2.0
 ///
 
-import { ERROR__DATA_IS_GETTER, ERROR__DATA_IS_LOCKED } from './const';
+import { ERROR__DATA_IS_GETTER, ERROR__DATA_IS_LOCKED, ERROR__SUBSCRIBE_TO_DATA_GETTER } from './const';
 
 export class WireDataLockToken {
   equal(token) {
@@ -39,17 +39,23 @@ export class WireData {
     return this._key;
   }
   get value() {
-    console.log(`> WireData -> get value: ${this._value}`);
-    return this._value;
+    console.log(`> WireData(${this.key}) -> get value (isGetter: ${this.isGetter}) = ${this._value}`);
+    return this.isGetter ? this._getter(this) : this._value;
   }
   set value(input) {
-    console.log(`> WireData -> set value: ${input} (typeof value ${typeof input}) : isLocked = ${this.isLocked}`);
+    console.log(
+      `> WireData(${this.key}) -> set value: ${input} (typeof value ${typeof input}) : isLocked = ${this.isLocked}`,
+    );
     this._guardian();
     this._value = input;
-    this.refresh().then(() => {});
+    this.refresh();
   }
   set getter(value) {
+    console.log(`> WireData(${this.key}) -> set getter`, value);
     this._getter = value;
+  }
+  get numberOfListeners() {
+    return this._listeners.length;
   }
 
   /// Prevent any value modifications inside specific of [WireData] instance.
@@ -71,9 +77,12 @@ export class WireData {
   }
 
   async refresh() {
-    if (this._listeners.length === 0) return;
+    console.log(`> WireData(${this.key}) -> refresh()`, this, this._listeners);
+    if (this.numberOfListeners === 0) return;
+    const valueForListener = this.value;
     for (const listener of this._listeners) {
-      await listener(this._value);
+      console.log('\t\t refresh: ', listener);
+      await listener(valueForListener);
     }
   }
 
@@ -87,13 +96,13 @@ export class WireData {
 
   async remove(clean = false) {
     if (!clean) this._guardian();
-    this.value = null;
+    this._value = null;
     this._lockToken = null;
-    this._onRemove?.call(this, this._key);
+    this._onRemove(this._key);
     this._onRemove = undefined;
     this._onReset = undefined;
     await this.refresh();
-    this._listeners.splice(0, this._listeners.length);
+    this._listeners.splice(0, this.numberOfListeners);
   }
 
   _guardian() {
@@ -101,6 +110,7 @@ export class WireData {
   }
 
   subscribe(wireDataListener) {
+    if (this.isGetter) throw new Error(ERROR__SUBSCRIBE_TO_DATA_GETTER);
     if (!this.hasListener(wireDataListener)) {
       this._listeners.push(wireDataListener);
     }
@@ -108,19 +118,20 @@ export class WireData {
   }
 
   unsubscribe(wireDataListener) {
+    if (this.isGetter) throw new Error(ERROR__SUBSCRIBE_TO_DATA_GETTER);
     if (wireDataListener) {
       if (this.hasListener(wireDataListener)) {
         const listenerIndex = this._listeners.indexOf(wireDataListener);
         this._listeners.splice(listenerIndex, 1);
       }
     } else {
-      this._listeners.splice(0, this._listeners.length);
+      this._listeners.splice(0, this.numberOfListeners);
     }
     return this;
   }
 
   hasListener(listener) {
-    return this._listeners.indexOf(listener) > -1;
+    return this.numberOfListeners > 0 && this._listeners.indexOf(listener) > -1;
   }
 }
 

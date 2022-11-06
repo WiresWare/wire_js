@@ -118,7 +118,7 @@ export default class Wire {
   }
   /// Register many signals at once
   static async addMany(scope, signalToHandlerMap) {
-    for await (const [key, value] of signalToHandlerMap) {
+    for await (const [key, value] of Object.entries(signalToHandlerMap)) {
       await Wire.add(scope, key, value);
     }
   }
@@ -222,11 +222,12 @@ export default class Wire {
       wireData.getter = getter;
       wireData.lock(new WireDataLockToken());
     }
-    if (value) {
+    if (value !== undefined && value !== null) {
       if (wireData.isGetter) throw new Error(ERROR__VALUE_IS_NOT_ALLOWED_TOGETHER_WITH_GETTER);
       const prevValue = wireData.isSet ? wireData.value : null;
+      const isValueFunction = typeof value === 'function';
       console.log(`> Wire.data -> prev = ${prevValue}`);
-      const nextValue = typeof value === 'function' ? value(prevValue) : value;
+      const nextValue = isValueFunction ? value(prevValue) : value;
       wireData.value = nextValue;
       this._MIDDLEWARE_LAYER.onData(key, prevValue, nextValue).then(() => {});
     }

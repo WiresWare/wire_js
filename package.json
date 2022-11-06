@@ -1,8 +1,17 @@
 {
-  "name": "@wire/core",
-  "private": true,
-  "version": "0.0.0",
+  "name": "cores.wire",
+  "version": "0.0.15",
   "type": "module",
+  "author": {
+    "email": "vladimir.cores@gmail.com",
+    "name": "Vladimir Cores (Minkin)"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/wire.umd.js",
+  "module": "./dist/wire.es.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,6 +21,7 @@
     "@babel/core": "^7.19.6",
     "@babel/eslint-parser": "^7.19.1",
     "@vitest/ui": "^0.24.5",
+    "cores.wire": "^0.0.1",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

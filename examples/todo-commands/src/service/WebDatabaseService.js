@@ -4,11 +4,11 @@ class WebDatabaseService {
     window.localStorage.remove(key);
   }
   exist(key) {
-    const result = !!window.localStorage.containsKey(key);
+    const result = !!window.localStorage[key];
     console.log(`> WebDatabaseService -> exist: ${key} = ${result}`);
     return result;
   }
-  init(key) {
+  async init(key) {
     console.log(`> StaticDatabaseService -> init: ${key}`);
     return Promise.resolve(true);
   }

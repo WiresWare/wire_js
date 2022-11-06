@@ -1,6 +1,6 @@
 {
   "name": "todo-commands",
-  "version": "1.0.0",
+  "version": "0.6.0",
   "description": "Example of using Wire J(T)S library on TodoMVC",
   "main": "src/main.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "@babel/core": "^7.19.6",
     "@babel/eslint-parser": "^7.19.1",
     "@vitest/ui": "^0.24.5",
-    "@wire/core": "file:./../../../wire_js",
+    "cores.wire": "0.0.15",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

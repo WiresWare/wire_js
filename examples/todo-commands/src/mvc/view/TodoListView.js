@@ -1,14 +1,25 @@
-import { Wire } from '@wire/core/src';
+import { Wire } from 'cores.wire';
+
 import DataKeys from '@/consts/DataKeys';
-import DomElement from '@/view/base/DomElement';
-import TodoListItemView from '@/view/TodoListItemView';
+import DomElement from '@/mvc/view/base/DomElement';
+import TodoListItemView from '@/mvc/view/TodoListItemView';
 
 class TodoListView extends DomElement {
   constructor(dom) {
     super(dom);
     const wireDataTodoList = Wire.data(DataKeys.LIST_OF_IDS);
-    const todoList = wireDataTodoList.value || [];
+    const todoList = wireDataTodoList.value;
+
     if (todoList.length > 0) todoList.forEach((id) => this.append(id));
+
+    wireDataTodoList.subscribe((list) => {
+      console.log(`> TodoListView -> list update ${list}`);
+      for (const id of list) {
+        if (!document.getElementById(id)) {
+          this.append(id);
+        }
+      }
+    });
   }
 
   append(id) {
