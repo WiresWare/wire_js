@@ -11,7 +11,6 @@ class CountCompletedGetter {
     console.log('> CountCompletedGetter -> getter', { result });
     return result;
   }
-  forceUpdate() {}
 }
 
 export default CountCompletedGetter;

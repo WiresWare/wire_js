@@ -23,7 +23,8 @@ class TodoToggleCommand extends WireCommand {
       Wire.data(this.todoId, todoVO);
       Wire.data(DataKeys.NOT_COMPLETED_COUNT, completedCount);
 
-      if (wasCompleted) await new CheckAllCompletedCommand().execute();
+      // if (wasCompleted) await new CheckAllCompletedCommand().execute();
+      return wasCompleted;
     }
   }
 }

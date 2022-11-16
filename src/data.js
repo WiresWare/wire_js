@@ -90,7 +90,7 @@ export class WireData {
     this._guardian();
     const previousValue = this._value;
     this._value = undefined;
-    this._onReset?.call(this, this._key, previousValue);
+    this._onReset(this._key, previousValue);
     await this.refresh();
   }
 
@@ -146,5 +146,23 @@ export class WireSendResults {
   }
   get signalHasNoSubscribers() {
     return this._noSubscribers;
+  }
+}
+
+export class WireDatabaseService {
+  async init(key) {
+    return key;
+  }
+  async exist(key) {
+    return key;
+  }
+  async retrieve(key) {
+    return key;
+  }
+  async save(key, data) {
+    return { key, data };
+  }
+  async delete(key) {
+    return key;
   }
 }

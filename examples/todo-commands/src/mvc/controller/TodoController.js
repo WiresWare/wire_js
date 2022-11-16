@@ -10,18 +10,27 @@ import CountCompletedGetter from '@/mvc/controller/getters/CountCompletedGetter'
 import CompleteAllTodosCommand from '@/mvc/controller/commands/operations/CompleteAllTodosCommand';
 import ClearCompletedTodosCommand from '@/mvc/controller/commands/operations/ClearCompletedTodosCommand';
 import ApplyFilterToTodosCommand from '@/mvc/controller/commands/operations/ApplyFilterToTodosCommand';
+import CheckAllCompletedCommand from '@/mvc/controller/commands/operations/CheckAllCompletedCommand';
 
 class TodoController {
   constructor() {
-    Wire.addMany(this, {
-      [ViewSignals.INPUT]: (inputDTO) => new TodoInputCommand(inputDTO).execute(),
-      [ViewSignals.TOGGLE]: (id) => new TodoToggleCommand(id).execute(),
-      [ViewSignals.EDIT]: (editDTO) => new TodoEditCommand(editDTO).execute(),
-      [ViewSignals.DELETE]: (id) => new TodoDeleteCommand(id).execute(),
-      [ViewSignals.COMPLETE_ALL]: (isComplete) => new CompleteAllTodosCommand(isComplete).execute(),
-      [ViewSignals.CLEAR_COMPLETED]: () => new ClearCompletedTodosCommand().execute(),
-      [ViewSignals.FILTER]: (filter) => new ApplyFilterToTodosCommand(filter).execute(),
-    }).then(() => {
+    Wire.addMany(
+      this,
+      new Map(
+        Object.entries({
+          [ViewSignals.INPUT]: (inputDTO) => new TodoInputCommand(inputDTO).execute(),
+          [ViewSignals.TOGGLE]: (id) =>
+            new TodoToggleCommand(id)
+              .execute()
+              .then((wasCompleted) => (wasCompleted ? new CheckAllCompletedCommand().execute() : Promise.resolve())),
+          [ViewSignals.EDIT]: (editDTO) => new TodoEditCommand(editDTO).execute(),
+          [ViewSignals.DELETE]: (id) => new TodoDeleteCommand(id).execute(),
+          [ViewSignals.COMPLETE_ALL]: (isComplete) => new CompleteAllTodosCommand(isComplete).execute(),
+          [ViewSignals.CLEAR_COMPLETED]: () => new ClearCompletedTodosCommand().execute(),
+          [ViewSignals.FILTER]: (filter) => new ApplyFilterToTodosCommand(filter).execute(),
+        }),
+      ),
+    ).then(() => {
       console.log('> TodoController -> READY!');
     });
     console.log('> TodoController -> Prepare getters');

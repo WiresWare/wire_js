@@ -5,7 +5,7 @@
 ///
 
 import { ERROR__WIRE_ALREADY_REGISTERED } from './const';
-import { WireData, WireSendResults } from './data.js';
+import { WireData, WireSendResults } from './data';
 
 export class WireCommunicateLayer {
   constructor() {

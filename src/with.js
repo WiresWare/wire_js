@@ -1,26 +1,11 @@
 import Wire from './wire';
 
 export class WireWithWhenReady {
-  constructor() {
-    this.whenReady = null;
+  get whenReady() {
+    return this._whenReady;
   }
-}
-
-export class WireDatabaseService {
-  async init(key) {
-    return key;
-  }
-  async exist(key) {
-    return key;
-  }
-  async retrieve(key) {
-    return key;
-  }
-  async save(key, data) {
-    return { key, data };
-  }
-  async delete(key) {
-    return key;
+  constructor(whenReady) {
+    this._whenReady = whenReady;
   }
 }
 

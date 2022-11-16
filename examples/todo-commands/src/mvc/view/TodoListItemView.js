@@ -75,6 +75,8 @@ class TodoListItemView extends DomElement {
   }
   remove() {
     console.log(`> TodoListItemView(${this.dom.id}) -> remove`);
+    const todoWD = Wire.data(this.dom.id);
+    todoWD.unsubscribe(this._OnDataChanged);
     this.inpToggle.onclick = null;
     this.btnDelete.onclick = null;
     this.inpEdit.onkeydown = null;
